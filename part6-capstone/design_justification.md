@@ -1,3 +1,7 @@
+## Storage Systems
+## OLTP vs OLAP Boundary
+## Trade-offs
+
 Storage Systems
 For this hospital network, I decided on a mixed storage strategy because no single database can handle both real-time vitals and complex historical analysis effectively.
 
