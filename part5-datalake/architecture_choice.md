@@ -1,3 +1,5 @@
+## Architecture Recommendation
+
 Architecture Recommendation
 For a fast-growing food delivery startup dealing with GPS logs, text reviews, transactions, and images, a Data Lakehouse is the right call.
 Why not a traditional Data Warehouse?
