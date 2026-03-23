@@ -1,3 +1,6 @@
+## Anomaly Analysis
+## Normalization Justification
+
 Anomaly Analysis
 
 Insert Anomaly
