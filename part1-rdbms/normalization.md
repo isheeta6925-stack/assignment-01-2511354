@@ -1,42 +1,23 @@
-## Anomaly Analysis
+Anomaly Analysis
 
-### Insert Anomaly
-Right now, the data is tied strictly to orders. This means if I want to add a new item like a 'Gaming Mouse' (Product P009) to our catalog, I can't do it unless a customer actually buys it first. There is no way to store product details on their own because every row needs an `order_id`.
+Insert Anomaly
 
-### Update Anomaly
-The data for sales reps is really inconsistent. For example, look at **Deepak Joshi (SR01)**. In one row his address says "Nariman Point," but in another, it’s shortened to "Nariman Pt." If he moves to a new office, I’d have to manually find and fix every single row where he appears, which is a huge waste of time and prone to mistakes.
+The current structure ties everything to orders, which creates a problem for the product catalogue. There's no way to add a new item - say, a Gaming Mouse (P009) - unless a customer buys it first. Every row requires an order_id, so product details can't exist on their own.
 
-### Delete Anomaly
-The customer info is stuck inside the order rows. If I decide to delete **Order ORD1027**, I'm not just deleting a sale—I'm accidentally deleting **Priya Sharma (C002)** from our system entirely. Since her email and city are only listed in that specific row, once the order is gone, her contact info is gone too.
+Update Anomaly
 
+Sales rep data is inconsistent across rows. Take Deepak Joshi (SR01): his address appears as both "Nariman Point" and "Nariman Pt." in different rows. If his office changes, every row he appears in needs to be updated manually, which is time-consuming and easy to get wrong.
 
-## Normalization Justification
+Delete Anomaly
 
-The argument that a single flat table is "simpler" holds up only until the data 
-starts to grow — at which point it becomes a liability rather than a convenience. 
-The orders_flat.csv dataset itself illustrates this clearly.
+Customer information is embedded in order rows rather than stored separately. Deleting Order ORD1027 doesn't just remove a sale - it wipes out Priya Sharma (C002) entirely, since her email and city are only recorded against that order.
 
-Consider sales representative Deepak Joshi (SR01). His office address appears in 
-83 rows of the flat file, yet it is still inconsistent: 15 of those rows store 
-"Nariman Pt" while the remaining 68 store "Nariman Point." This is not a 
-hypothetical risk — it is an observed data quality failure in the provided dataset. 
-In a normalized schema, Deepak's address is stored exactly once in the `sales_reps` 
-table. Correcting it requires a single UPDATE statement. In the flat design, a 
-developer must find and fix all 83 rows simultaneously, with no guarantee they 
-caught every occurrence.
+Normalization Justification
 
-The flat design also makes certain legitimate business operations structurally 
-impossible. Product P008 (Webcam, ₹2,100) exists in only one row — ORD1185. If 
-that order is cancelled and the row is deleted, the product disappears from the 
-system entirely. There is no separate product catalog, so the business loses all 
-record that the Webcam was ever sold or even stocked. Similarly, a new sales 
-representative cannot be added to the system until they have at least one completed 
-order — meaning the company cannot onboard staff in advance of their first sale. 
-Both of these are direct operational constraints imposed by the flat structure, 
-not edge cases.
+A flat table feels simple until the data starts to grow - at which point the structure actively works against you. The orders_flat.csv dataset demonstrates this directly.
 
-Normalization to 3NF resolves all three of these problems by ensuring that 
-customers, products, and sales representatives exist as independent entities. 
-Each can be created, updated, or queried without touching the orders table at all. 
-This is not over-engineering — it is the minimum structure required for a business 
-database to behave predictably as data volume and operational complexity increase.
+Deepak Joshi (SR01) appears in 83 rows, yet his address is inconsistently recorded: 15 rows list "Nariman Pt," while the other 68 list "Nariman Point." This isn't a theoretical risk - it's an observed data quality failure in the provided dataset. In a normalised schema, his address appears only once in the sales_reps table. Fixing it takes a single UPDATE. In the flat design, all 83 rows need to be found and corrected with no guarantee that every occurrence is caught.
+
+The flat structure also makes certain routine operations impossible by design. Product P008 (Webcam, ₹2,100) appears in just one row—ORD1185. If that order is cancelled and deleted, the product vanishes from the system entirely. There's no separate catalogue, so the business loses all record that the webcam was ever stocked or sold. The same logic applies to staff: a new sales rep can't be added to the system until they have a completed order, meaning the company can't onboard anyone before their first sale. These aren't edge cases; they're direct constraints the flat structure imposes on normal business operations.
+
+Normalisation to 3NF resolves all three issues by making customers, products, and sales reps independent entities. Each can be created, updated, or queried without touching the orders table. That's not over-engineering - it's the minimum structure needed for a business database to behave reliably as data and complexity grow.
